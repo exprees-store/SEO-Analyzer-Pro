@@ -10,27 +10,27 @@
     body { font-family: 'Cairo', sans-serif; }
   </style>
 </head>
-<body class="bg-slate-900 text-slate-100 flex h-screen overflow-hidden">
+<body class="bg-slate-900 text-slate-100 flex h-screen overflow-hidden flex-row-reverse">
 
-  <!-- Sidebar -->
-  <aside class="w-64 bg-slate-800 border-l border-slate-700 flex flex-col justify-between p-4">
+  <!-- Sidebar (Right Side for Arabic) -->
+  <aside class="w-64 bg-slate-800 border-r border-slate-700 flex flex-col justify-between p-4 shrink-0">
     <div>
-      <div class="flex items-center gap-2 mb-8 px-2">
-        <span class="bg-red-600 text-white font-bold p-2 rounded-lg text-xl">YT</span>
+      <div class="flex items-center gap-2 mb-8 px-2 justify-end">
         <h1 class="text-xl font-bold tracking-wide">Youtuber <span class="text-red-500">OS</span></h1>
+        <span class="bg-red-600 text-white font-bold p-2 rounded-lg text-xl">YT</span>
       </div>
       <nav class="space-y-2" id="sidebarNav">
-        <button onclick="switchTab(this)" class="nav-btn w-full flex items-center gap-3 px-3 py-2 bg-red-600/10 text-red-500 rounded-lg font-semibold transition cursor-pointer">
-          <span>📊</span> لوحة التحكم
+        <button onclick="switchTab(this)" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 bg-red-600/10 text-red-500 rounded-lg font-semibold transition cursor-pointer">
+          <span>لوحة التحكم</span> <span>📊</span>
         </button>
-        <button onclick="switchTab(this)" class="nav-btn w-full flex items-center gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
-          <span>💡</span> توليد الأفكار
+        <button onclick="switchTab(this)" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
+          <span>توليد الأفكار</span> <span>💡</span>
         </button>
-        <button onclick="switchTab(this)" class="nav-btn w-full flex items-center gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
-          <span>📝</span> كاتب السكريبت
+        <button onclick="switchTab(this)" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
+          <span>كاتب السكريبت</span> <span>📝</span>
         </button>
-        <button onclick="switchTab(this)" class="nav-btn w-full flex items-center gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
-          <span>🎬</span> خط الإنتاج
+        <button onclick="switchTab(this)" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
+          <span>خط الإنتاج</span> <span>🎬</span>
         </button>
       </nav>
     </div>
@@ -39,44 +39,44 @@
   <!-- Main Content -->
   <main class="flex-1 overflow-y-auto p-8">
     <header class="flex justify-between items-center mb-8">
-      <div>
-        <h2 class="text-2xl font-bold">مرحباً بك مجدداً 👋</h2>
-      </div>
       <button onclick="openModal()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition cursor-pointer">
         <span>+</span> إنشاء فيديو جديد
       </button>
+      <div>
+        <h2 class="text-2xl font-bold">مرحباً بك مجدداً 👋</h2>
+      </div>
     </header>
 
     <!-- AI Generator Section -->
     <section class="bg-slate-800 p-6 rounded-xl border border-slate-700 mb-8">
-      <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
-        <span>✨</span> مولد السكريبت والعناوين بالذكاء الاصطناعي
+      <h3 class="text-lg font-bold mb-4 flex items-center justify-end gap-2">
+        <span>مولد السكريبت والعناوين بالذكاء الاصطناعي</span> <span>✨</span>
       </h3>
-      <div class="flex gap-4 mb-4">
-        <input id="topicInput" type="text" placeholder="أدخل موضوع الفيديو..." class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-slate-100 focus:outline-none focus:border-red-500">
-        <button onclick="generateScript()" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-semibold transition cursor-pointer">توليد الأفكار</button>
+      <div class="flex gap-4 mb-4 flex-row-reverse">
+        <input id="topicInput" type="text" placeholder="أدخل موضوع الفيديو..." class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-slate-100 text-right focus:outline-none focus:border-red-500">
+        <button onclick="generateScript()" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-semibold transition cursor-pointer text-white">توليد الأفكار</button>
       </div>
-      <div id="outputArea" class="hidden bg-slate-900 p-4 rounded-lg border border-slate-700 text-slate-300 text-sm space-y-2"></div>
+      <div id="outputArea" class="hidden bg-slate-900 p-4 rounded-lg border border-slate-700 text-slate-300 text-sm space-y-2 text-right"></div>
     </section>
 
     <!-- Production Pipeline Kanban -->
     <section>
-      <h3 class="text-lg font-bold mb-4">خط إنتاج الفيديوهات (Kanban)</h3>
+      <h3 class="text-lg font-bold mb-4 text-right">خط إنتاج الفيديوهات (Kanban)</h3>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         
         <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-          <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase">الأفكار والسكريبت</h4>
-          <div id="col-script" class="space-y-3"></div>
+          <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">جاهز للرفع</h4>
+          <div id="col-ready" class="space-y-3"></div>
         </div>
 
         <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-          <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase">التصوير والمونتاج</h4>
+          <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">التصوير والمونتاج</h4>
           <div id="col-edit" class="space-y-3"></div>
         </div>
 
         <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-          <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase">جاهز للرفع</h4>
-          <div id="col-ready" class="space-y-3"></div>
+          <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">الأفكار والسكريبت</h4>
+          <div id="col-script" class="space-y-3"></div>
         </div>
 
       </div>
@@ -84,31 +84,29 @@
   </main>
 
   <!-- Modal -->
-  <div id="videoModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center p-4">
-    <div class="bg-slate-800 border border-slate-700 rounded-xl w-full max-w-md p-6 space-y-4">
+  <div id="videoModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-800 border border-slate-700 rounded-xl w-full max-w-md p-6 space-y-4 text-right">
       <h3 class="text-lg font-bold">إضافة مشروع فيديو جديد</h3>
       <div>
         <label class="block text-xs text-slate-400 mb-1">عنوان الفيديو</label>
-        <input id="newVideoTitle" type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-slate-100 focus:outline-none focus:border-red-500">
+        <input id="newVideoTitle" type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-slate-100 text-right focus:outline-none focus:border-red-500">
       </div>
       <div>
         <label class="block text-xs text-slate-400 mb-1">المرحلة الحالية</label>
-        <select id="newVideoStage" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-slate-100">
+        <select id="newVideoStage" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-slate-100 text-right">
           <option value="col-script">الأفكار والسكريبت</option>
           <option value="col-edit">التصوير والمونتاج</option>
           <option value="col-ready">جاهز للرفع</option>
         </select>
       </div>
-      <div class="flex justify-end gap-2 pt-2">
+      <div class="flex justify-start gap-2 pt-2">
+        <button onclick="addVideo()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-sm font-semibold rounded-lg cursor-pointer text-white">حفظ وإضافة</button>
         <button onclick="closeModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-sm rounded-lg cursor-pointer">إلغاء</button>
-        <button onclick="addVideo()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-sm font-semibold rounded-lg cursor-pointer">حفظ وإضافة</button>
       </div>
     </div>
   </div>
 
   <script>
-    // --- JavaScript لجعل الزر يعمل ---
-
     function generateScript() {
       const input = document.getElementById('topicInput').value;
       const outputArea = document.getElementById('outputArea');
@@ -118,7 +116,6 @@
         return;
       }
 
-      // إظهار منطقة النتائج وتوليد نصوص عشوائية للمعاينة
       outputArea.classList.remove('hidden');
       outputArea.innerHTML = `
         <p class="font-bold text-red-400">مقترحات عناوين جذابة (محاكاة):</p>
@@ -132,7 +129,6 @@
       `;
     }
 
-    // --- بقية وظائف الواجهة ---
     function switchTab(element) {
       document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.classList.remove('bg-red-600/10', 'text-red-500', 'font-semibold');
@@ -143,13 +139,15 @@
     }
 
     function openModal() {
-      document.getElementById('videoModal').classList.remove('hidden');
-      document.getElementById('videoModal').classList.add('flex');
+      const modal = document.getElementById('videoModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
     }
 
     function closeModal() {
-      document.getElementById('videoModal').classList.add('hidden');
-      document.getElementById('videoModal').classList.remove('flex');
+      const modal = document.getElementById('videoModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
     }
 
     function addVideo() {
@@ -162,7 +160,7 @@
       }
 
       const card = document.createElement('div');
-      card.className = "bg-slate-800 p-3 rounded-lg border border-slate-700";
+      card.className = "bg-slate-800 p-3 rounded-lg border border-slate-700 text-right";
       card.innerHTML = `
         <span class="text-xs font-semibold bg-red-500/10 text-red-400 px-2 py-0.5 rounded">جديد</span>
         <p class="font-semibold text-sm mt-2">${title}</p>
