@@ -50,7 +50,7 @@
     </header>
 
     <!-- 1. Dashboard View (لوحة التحكم العامة) -->
-    <div id="view-dashboard" class="page-view space-y-8">
+    <div id="view-dashboard" class="page-content space-y-8">
       <section class="bg-slate-800 p-6 rounded-xl border border-slate-700">
         <h3 class="text-lg font-bold mb-4 flex items-center justify-end gap-2">
           <span>مولد السكريبت والعناوين بالذكاء الاصطناعي</span> <span>✨</span>
@@ -64,7 +64,7 @@
     </div>
 
     <!-- 2. AI Ideas View (توليد الأفكار) -->
-    <div id="view-ai" class="page-view hidden space-y-6 text-right">
+    <div id="view-ai" class="page-content hidden space-y-6 text-right">
       <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
         <h3 class="text-xl font-bold flex items-center justify-end gap-2">
           <span>قسم توليد الأفكار والاستكشاف</span> <span>💡</span>
@@ -79,7 +79,7 @@
     </div>
 
     <!-- 3. Script Writer View (كاتب السكريبت) -->
-    <div id="view-script" class="page-view hidden space-y-6 text-right">
+    <div id="view-script" class="page-content hidden space-y-6 text-right">
       <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
         <h3 class="text-xl font-bold flex items-center justify-end gap-2">
           <span>محرر وكاتب السكريبت المتقدم</span> <span>📝</span>
@@ -103,23 +103,23 @@
     </div>
 
     <!-- 4. Kanban Pipeline View (خط الإنتاج المستقل) -->
-    <div id="view-kanban" class="page-view hidden space-y-6 text-right">
+    <div id="view-kanban" class="page-content hidden space-y-6 text-right">
       <h3 class="text-xl font-bold mb-4">خط إنتاج الفيديوهات (Kanban)</h3>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         
         <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
           <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">جاهز للرفع</h4>
-          <div id="col-ready" class="kanban-col space-y-3 min-h-[200px]"></div>
+          <div id="col-ready" class="space-y-3 min-h-[250px]"></div>
         </div>
 
         <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
           <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">التصوير والمونتاج</h4>
-          <div id="col-edit" class="kanban-col space-y-3 min-h-[200px]"></div>
+          <div id="col-edit" class="space-y-3 min-h-[250px]"></div>
         </div>
 
         <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
           <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">الأفكار والسكريبت</h4>
-          <div id="col-script" class="kanban-col space-y-3 min-h-[200px]"></div>
+          <div id="col-script" class="space-y-3 min-h-[250px]"></div>
         </div>
 
       </div>
@@ -151,20 +151,27 @@
   </div>
 
   <script>
-    // نظام التنقل الفعلي بين الصفحات (Tabs)
+    // نظام التنقل السليم بين الصفحات
     function switchTab(element, viewId) {
+      // إزالة التحديد من جميع أزرار القائمة
       document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.classList.remove('bg-red-600/10', 'text-red-500', 'font-semibold');
         btn.classList.add('text-slate-400');
       });
+      // تحديد الزر الحالي
       element.classList.add('bg-red-600/10', 'text-red-500', 'font-semibold');
       element.classList.remove('text-slate-400');
 
-      document.querySelectorAll('.page-view').forEach(view => {
-        view.classList.add('hidden');
+      // إخفاء جميع محتويات الصفحات
+      document.querySelectorAll('.page-content').forEach(page => {
+        page.classList.add('hidden');
       });
 
-      document.getElementById('view-' + viewId).classList.remove('hidden');
+      // إظهار الصفحة المطلوبة فقط
+      const targetView = document.getElementById('view-' + viewId);
+      if (targetView) {
+        targetView.classList.remove('hidden');
+      }
     }
 
     function generateScript() {
