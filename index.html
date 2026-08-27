@@ -12,6 +12,7 @@
 </head>
 <body class="bg-slate-900 text-slate-100 flex h-screen overflow-hidden flex-row-reverse">
 
+  <!-- Sidebar (Right Side for Arabic) -->
   <aside class="w-64 bg-slate-800 border-r border-slate-700 flex flex-col justify-between p-4 shrink-0">
     <div>
       <div class="flex items-center gap-2 mb-8 px-2 justify-end">
@@ -19,25 +20,27 @@
         <span class="bg-red-600 text-white font-bold p-2 rounded-lg text-xl">YT</span>
       </div>
       <nav class="space-y-2" id="sidebarNav">
-        <button onclick="scrollToSection('dashboardSection')" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 bg-red-600/10 text-red-500 rounded-lg font-semibold transition cursor-pointer">
+        <button onclick="switchTab(this, 'dashboard')" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 bg-red-600/10 text-red-500 rounded-lg font-semibold transition cursor-pointer">
           <span>لوحة التحكم</span> <span>📊</span>
         </button>
-        <button onclick="scrollToSection('aiSection')" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
+        <button onclick="switchTab(this, 'ai')" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
           <span>توليد الأفكار</span> <span>💡</span>
         </button>
-        <button onclick="scrollToSection('scriptSection')" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
+        <button onclick="switchTab(this, 'script')" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
           <span>كاتب السكريبت</span> <span>📝</span>
         </button>
-        <button onclick="scrollToSection('kanbanSection')" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
+        <button onclick="switchTab(this, 'kanban')" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
           <span>خط الإنتاج</span> <span>🎬</span>
         </button>
       </nav>
     </div>
   </aside>
 
-  <main id="mainContainer" class="flex-1 overflow-y-auto p-8 space-y-8">
+  <!-- Main Content -->
+  <main class="flex-1 overflow-y-auto p-8">
     
-    <header id="dashboardSection" class="flex justify-between items-center">
+    <!-- Header -->
+    <header class="flex justify-between items-center mb-8">
       <button onclick="openModal()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition cursor-pointer">
         <span>+</span> إنشاء فيديو جديد
       </button>
@@ -46,62 +49,85 @@
       </div>
     </header>
 
-    <section id="aiSection" class="bg-slate-800 p-6 rounded-xl border border-slate-700">
-      <h3 class="text-lg font-bold mb-4 flex items-center justify-end gap-2">
-        <span>مولد السكريبت والعناوين بالذكاء الاصطناعي</span> <span>✨</span>
-      </h3>
-      <div class="flex gap-4 mb-4 flex-row-reverse">
-        <input id="topicInput" type="text" placeholder="أدخل موضوع الفيديو (مثال: الفارس الفضائي)..." class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-slate-100 text-right focus:outline-none focus:border-red-500">
-        <button onclick="generateScript()" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-semibold transition cursor-pointer text-white">توليد الأفكار</button>
-      </div>
-      <div id="outputArea" class="hidden bg-slate-900 p-4 rounded-lg border border-slate-700 text-slate-300 text-sm space-y-2 text-right"></div>
-    </section>
+    <!-- 1. Dashboard View (لوحة التحكم العامة) -->
+    <div id="view-dashboard" class="page-view space-y-8">
+      <section class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+        <h3 class="text-lg font-bold mb-4 flex items-center justify-end gap-2">
+          <span>مولد السكريبت والعناوين بالذكاء الاصطناعي</span> <span>✨</span>
+        </h3>
+        <div class="flex gap-4 mb-4 flex-row-reverse">
+          <input id="topicInput" type="text" placeholder="أدخل موضوع الفيديو (مثال: الفارس الفضائي)..." class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-slate-100 text-right focus:outline-none focus:border-red-500">
+          <button onclick="generateScript()" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-semibold transition cursor-pointer text-white">توليد الأفكار</button>
+        </div>
+        <div id="outputArea" class="hidden bg-slate-900 p-4 rounded-lg border border-slate-700 text-slate-300 text-sm space-y-2 text-right"></div>
+      </section>
+    </div>
 
-    <section id="scriptSection" class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
-      <h3 class="text-xl font-bold flex items-center justify-end gap-2">
-        <span>محرر وكاتب السكريبت المتقدم</span> <span>📝</span>
-      </h3>
-      <p class="text-slate-400 text-sm text-right">قم بكتابة أو لصق سكريبت الفيديو (مثل سكريبت الفارس الفضائي) هنا لإرساله مباشرة لخط الإنتاج.</p>
-      
-      <div>
-        <label class="block text-xs text-slate-400 mb-1 text-right">عنوان أو موضوع السكريبت</label>
-        <input id="scriptTitle" type="text" placeholder="مثلاً: الفارس الفضائي..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-100 text-right focus:outline-none focus:border-red-500">
+    <!-- 2. AI Ideas View (توليد الأفكار) -->
+    <div id="view-ai" class="page-view hidden space-y-6 text-right">
+      <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
+        <h3 class="text-xl font-bold flex items-center justify-end gap-2">
+          <span>قسم توليد الأفكار والاستكشاف</span> <span>💡</span>
+        </h3>
+        <p class="text-slate-400 text-sm">استخدم هذه الواجهة لاستخراج الأفكار والعناوين المبدئية لأي فيديو جديد.</p>
+        <div class="flex gap-4 mb-4 flex-row-reverse">
+          <input id="topicInput2" type="text" placeholder="أدخل فكرة الفيديو..." class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-slate-100 text-right focus:outline-none focus:border-red-500">
+          <button onclick="generateScript2()" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-semibold transition cursor-pointer text-white">توليد الأفكار</button>
+        </div>
+        <div id="outputArea2" class="hidden bg-slate-900 p-4 rounded-lg border border-slate-700 text-slate-300 text-sm space-y-2 text-right"></div>
       </div>
+    </div>
 
-      <div>
-        <label class="block text-xs text-slate-400 mb-1 text-right">نص السكريبت كامل</label>
-        <textarea id="scriptBody" rows="6" placeholder="اكتب أو الصق نص السكريبت هنا..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-100 text-right focus:outline-none focus:border-red-500"></textarea>
+    <!-- 3. Script Writer View (كاتب السكريبت) -->
+    <div id="view-script" class="page-view hidden space-y-6 text-right">
+      <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
+        <h3 class="text-xl font-bold flex items-center justify-end gap-2">
+          <span>محرر وكاتب السكريبت المتقدم</span> <span>📝</span>
+        </h3>
+        <p class="text-slate-400 text-sm">قم بكتابة أو لصق سكريبت الفيديو (مثل سكريبت الفارس الفضائي) هنا لإرساله مباشرة لخط الإنتاج.</p>
+        
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">عنوان أو موضوع السكريبت</label>
+          <input id="scriptTitle" type="text" placeholder="مثلاً: الفارس الفضائي..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-100 text-right focus:outline-none focus:border-red-500">
+        </div>
+
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">نص السكريبت كامل</label>
+          <textarea id="scriptBody" rows="6" placeholder="اكتب أو الصق نص السكريبت هنا..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-100 text-right focus:outline-none focus:border-red-500"></textarea>
+        </div>
+
+        <div class="flex justify-end gap-3">
+          <button onclick="saveExternalScript()" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-semibold transition cursor-pointer text-white">حفظ السكريبت وإرساله لخط الإنتاج</button>
+        </div>
       </div>
+    </div>
 
-      <div class="flex justify-end gap-3">
-        <button onclick="saveExternalScript()" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-semibold transition cursor-pointer text-white">حفظ السكريبت وإرساله لخط الإنتاج</button>
-      </div>
-    </section>
-
-    <section id="kanbanSection">
-      <h3 class="text-lg font-bold mb-4 text-right">خط إنتاج الفيديوهات (Kanban)</h3>
+    <!-- 4. Kanban Pipeline View (خط الإنتاج المستقل) -->
+    <div id="view-kanban" class="page-view hidden space-y-6 text-right">
+      <h3 class="text-xl font-bold mb-4">خط إنتاج الفيديوهات (Kanban)</h3>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         
         <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
           <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">جاهز للرفع</h4>
-          <div id="col-ready" class="space-y-3"></div>
+          <div id="col-ready" class="kanban-col space-y-3 min-h-[200px]"></div>
         </div>
 
         <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
           <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">التصوير والمونتاج</h4>
-          <div id="col-edit" class="space-y-3"></div>
+          <div id="col-edit" class="kanban-col space-y-3 min-h-[200px]"></div>
         </div>
 
         <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
           <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">الأفكار والسكريبت</h4>
-          <div id="col-script" class="space-y-3"></div>
+          <div id="col-script" class="kanban-col space-y-3 min-h-[200px]"></div>
         </div>
 
       </div>
-    </section>
+    </div>
 
   </main>
 
+  <!-- Modal -->
   <div id="videoModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center p-4 z-50">
     <div class="bg-slate-800 border border-slate-700 rounded-xl w-full max-w-md p-6 space-y-4 text-right">
       <h3 class="text-lg font-bold">إضافة مشروع فيديو جديد</h3>
@@ -125,30 +151,26 @@
   </div>
 
   <script>
-    // Smooth Scroll to Sections via Sidebar
-    function scrollToSection(sectionId) {
+    // نظام التنقل الفعلي بين الصفحات (Tabs)
+    function switchTab(element, viewId) {
       document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.classList.remove('bg-red-600/10', 'text-red-500', 'font-semibold');
         btn.classList.add('text-slate-400');
       });
-      event.currentTarget.classList.add('bg-red-600/10', 'text-red-500', 'font-semibold');
-      event.currentTarget.classList.remove('text-slate-400');
+      element.classList.add('bg-red-600/10', 'text-red-500', 'font-semibold');
+      element.classList.remove('text-slate-400');
 
-      const target = document.getElementById(sectionId);
-      if(target) {
-        target.scrollIntoView({ behavior: 'smooth' });
-      }
+      document.querySelectorAll('.page-view').forEach(view => {
+        view.classList.add('hidden');
+      });
+
+      document.getElementById('view-' + viewId).classList.remove('hidden');
     }
 
     function generateScript() {
       const input = document.getElementById('topicInput').value;
       const outputArea = document.getElementById('outputArea');
-      
-      if(!input.trim()) {
-        alert('يرجى إدخال موضوع الفيديو أولاً!');
-        return;
-      }
-
+      if(!input.trim()) { alert('يرجى إدخال موضوع الفيديو أولاً!'); return; }
       outputArea.classList.remove('hidden');
       outputArea.innerHTML = `
         <p class="font-bold text-red-400">مقترحات عناوين جذابة (محاكاة):</p>
@@ -162,26 +184,31 @@
       `;
     }
 
+    function generateScript2() {
+      const input = document.getElementById('topicInput2').value;
+      const outputArea = document.getElementById('outputArea2');
+      if(!input.trim()) { alert('يرجى إدخال فكرة الفيديو أولاً!'); return; }
+      outputArea.classList.remove('hidden');
+      outputArea.innerHTML = `
+        <p class="font-bold text-red-400">مقترحات عناوين:</p>
+        <p class="text-xs">سر نجاح فيديو ${input} في أول 24 ساعة.</p>
+      `;
+    }
+
     function openModal() {
-      const modal = document.getElementById('videoModal');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
+      document.getElementById('videoModal').classList.remove('hidden');
+      document.getElementById('videoModal').classList.add('flex');
     }
 
     function closeModal() {
-      const modal = document.getElementById('videoModal');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
+      document.getElementById('videoModal').classList.add('hidden');
+      document.getElementById('videoModal').classList.remove('flex');
     }
 
     function addVideo() {
       const title = document.getElementById('newVideoTitle').value;
       const stage = document.getElementById('newVideoStage').value;
-
-      if(!title.trim()) {
-        alert('يرجى كتابة عنوان الفيديو');
-        return;
-      }
+      if(!title.trim()) { alert('يرجى كتابة عنوان الفيديو'); return; }
 
       const card = document.createElement('div');
       card.className = "bg-slate-800 p-3 rounded-lg border border-slate-700 text-right shadow-sm";
@@ -198,11 +225,7 @@
     function saveExternalScript() {
       const title = document.getElementById('scriptTitle').value;
       const body = document.getElementById('scriptBody').value;
-
-      if(!title.trim() || !body.trim()) {
-        alert('يرجى إدخال عنوان السكريبت والنص كاملاً قبل الحفظ!');
-        return;
-      }
+      if(!title.trim() || !body.trim()) { alert('يرجى إدخال عنوان السكريبت والنص كاملاً قبل الحفظ!'); return; }
 
       const card = document.createElement('div');
       card.className = "bg-slate-800 p-3 rounded-lg border border-slate-700 text-right shadow-sm";
@@ -212,13 +235,9 @@
       `;
 
       document.getElementById('col-script').appendChild(card);
-      
-      alert('تم حفظ السكريبت وإرساله بنجاح إلى خانة "الأفكار والسكريبت" في خط الإنتاج!');
+      alert('تم حفظ السكريبت وإرساله بنجاح إلى خط الإنتاج!');
       document.getElementById('scriptTitle').value = '';
       document.getElementById('scriptBody').value = '';
-      
-      // التوجه تلقائياً إلى قسم خط الإنتاج لرؤية النتيجة
-      document.getElementById('kanbanSection').scrollIntoView({ behavior: 'smooth' });
     }
   </script>
 </body>
