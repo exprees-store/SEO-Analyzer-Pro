@@ -19,24 +19,25 @@
         <span class="bg-red-600 text-white font-bold p-2 rounded-lg text-xl">YT</span>
       </div>
       <nav class="space-y-2" id="sidebarNav">
-        <button onclick="switchTab(this, 'dashboard')" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 bg-red-600/10 text-red-500 rounded-lg font-semibold transition cursor-pointer">
+        <button onclick="scrollToSection('dashboardSection')" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 bg-red-600/10 text-red-500 rounded-lg font-semibold transition cursor-pointer">
           <span>لوحة التحكم</span> <span>📊</span>
         </button>
-        <button onclick="switchTab(this, 'ideas')" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
+        <button onclick="scrollToSection('aiSection')" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
           <span>توليد الأفكار</span> <span>💡</span>
         </button>
-        <button onclick="switchTab(this, 'scriptWriter')" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
+        <button onclick="scrollToSection('scriptSection')" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
           <span>كاتب السكريبت</span> <span>📝</span>
         </button>
-        <button onclick="switchTab(this, 'pipeline')" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
+        <button onclick="scrollToSection('kanbanSection')" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
           <span>خط الإنتاج</span> <span>🎬</span>
         </button>
       </nav>
     </div>
   </aside>
 
-  <main class="flex-1 overflow-y-auto p-8">
-    <header class="flex justify-between items-center mb-8">
+  <main id="mainContainer" class="flex-1 overflow-y-auto p-8 space-y-8">
+    
+    <header id="dashboardSection" class="flex justify-between items-center">
       <button onclick="openModal()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition cursor-pointer">
         <span>+</span> إنشاء فيديو جديد
       </button>
@@ -45,82 +46,60 @@
       </div>
     </header>
 
-    <div id="view-dashboard" class="tab-content space-y-8">
-      <section class="bg-slate-800 p-6 rounded-xl border border-slate-700">
-        <h3 class="text-lg font-bold mb-4 flex items-center justify-end gap-2">
-          <span>مولد السكريبت والعناوين بالذكاء الاصطناعي</span> <span>✨</span>
-        </h3>
-        <div class="flex gap-4 mb-4 flex-row-reverse">
-          <input id="topicInput" type="text" placeholder="أدخل موضوع الفيديو..." class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-slate-100 text-right focus:outline-none focus:border-red-500">
-          <button onclick="generateScript()" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-semibold transition cursor-pointer text-white">توليد الأفكار</button>
-        </div>
-        <div id="outputArea" class="hidden bg-slate-900 p-4 rounded-lg border border-slate-700 text-slate-300 text-sm space-y-2 text-right"></div>
-      </section>
-
-      <section>
-        <h3 class="text-lg font-bold mb-4 text-right">خط إنتاج الفيديوهات (Kanban)</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-            <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">جاهز للرفع</h4>
-            <div id="col-ready" class="kanban-column space-y-3"></div>
-          </div>
-          <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-            <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">التصوير والمونتاج</h4>
-            <div id="col-edit" class="kanban-column space-y-3"></div>
-          </div>
-          <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-            <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">الأفكار والسكريبت</h4>
-            <div id="col-script" class="kanban-column space-y-3"></div>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <div id="view-ideas" class="tab-content hidden space-y-4 text-right">
-      <h3 class="text-xl font-bold mb-4">قسم توليد الأفكار والاستكشاف</h3>
-      <p class="text-slate-400 text-sm">استخدم شريط الذكاء الاصطناعي في لوحة التحكم لاستخراج الأفكار والعناوين المبدئية لأي موضوع ترغب بتصويره.</p>
-    </div>
-
-    <div id="view-scriptWriter" class="tab-content hidden space-y-6 text-right">
-      <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
-        <h3 class="text-xl font-bold flex items-center justify-end gap-2">
-          <span>محرر وكاتب السكريبت المتقدم</span> <span>📝</span>
-        </h3>
-        <p class="text-slate-400 text-sm">قم بلصق أو كتابة سكريبت الفيديو الجاهز من الخارج هنا، لتقسيمه وحفظه لخط الإنتاج.</p>
-        
-        <div>
-          <label class="block text-xs text-slate-400 mb-1">عنوان أو موضوع السكريبت</label>
-          <input id="scriptTitle" type="text" placeholder="مثلاً: مراجعة شاملة لهاتف آيفون الجديد..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-100 text-right focus:outline-none focus:border-red-500">
-        </div>
-
-        <div>
-          <label class="block text-xs text-slate-400 mb-1">نص السكريبت (المقدمة، التفاصيل، والخاتمة)</label>
-          <textarea id="scriptBody" rows="10" placeholder="اكتب أو الصق السكريبت هنا..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-100 text-right focus:outline-none focus:border-red-500"></textarea>
-        </div>
-
-        <div class="flex justify-end gap-3">
-          <button onclick="saveExternalScript()" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-semibold transition cursor-pointer text-white">حفظ السكريبت وإرساله لخط الإنتاج</button>
-        </div>
+    <section id="aiSection" class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+      <h3 class="text-lg font-bold mb-4 flex items-center justify-end gap-2">
+        <span>مولد السكريبت والعناوين بالذكاء الاصطناعي</span> <span>✨</span>
+      </h3>
+      <div class="flex gap-4 mb-4 flex-row-reverse">
+        <input id="topicInput" type="text" placeholder="أدخل موضوع الفيديو (مثال: الفارس الفضائي)..." class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-slate-100 text-right focus:outline-none focus:border-red-500">
+        <button onclick="generateScript()" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-semibold transition cursor-pointer text-white">توليد الأفكار</button>
       </div>
-    </div>
+      <div id="outputArea" class="hidden bg-slate-900 p-4 rounded-lg border border-slate-700 text-slate-300 text-sm space-y-2 text-right"></div>
+    </section>
 
-    <div id="view-pipeline" class="tab-content hidden space-y-6 text-right">
-      <h3 class="text-xl font-bold mb-4">خط الإنتاج الكامل (Kanban)</h3>
+    <section id="scriptSection" class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
+      <h3 class="text-xl font-bold flex items-center justify-end gap-2">
+        <span>محرر وكاتب السكريبت المتقدم</span> <span>📝</span>
+      </h3>
+      <p class="text-slate-400 text-sm text-right">قم بكتابة أو لصق سكريبت الفيديو (مثل سكريبت الفارس الفضائي) هنا لإرساله مباشرة لخط الإنتاج.</p>
+      
+      <div>
+        <label class="block text-xs text-slate-400 mb-1 text-right">عنوان أو موضوع السكريبت</label>
+        <input id="scriptTitle" type="text" placeholder="مثلاً: الفارس الفضائي..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-100 text-right focus:outline-none focus:border-red-500">
+      </div>
+
+      <div>
+        <label class="block text-xs text-slate-400 mb-1 text-right">نص السكريبت كامل</label>
+        <textarea id="scriptBody" rows="6" placeholder="اكتب أو الصق نص السكريبت هنا..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-100 text-right focus:outline-none focus:border-red-500"></textarea>
+      </div>
+
+      <div class="flex justify-end gap-3">
+        <button onclick="saveExternalScript()" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-semibold transition cursor-pointer text-white">حفظ السكريبت وإرساله لخط الإنتاج</button>
+      </div>
+    </section>
+
+    <section id="kanbanSection">
+      <h3 class="text-lg font-bold mb-4 text-right">خط إنتاج الفيديوهات (Kanban)</h3>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
         <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
           <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">جاهز للرفع</h4>
-          <div id="col-ready-pipeline" class="kanban-column space-y-3"></div>
+          <div id="col-ready" class="space-y-3"></div>
         </div>
+
         <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
           <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">التصوير والمونتاج</h4>
-          <div id="col-edit-pipeline" class="kanban-column space-y-3"></div>
+          <div id="col-edit" class="space-y-3"></div>
         </div>
+
         <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
           <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">الأفكار والسكريبت</h4>
-          <div id="col-script-pipeline" class="kanban-column space-y-3"></div>
+          <div id="col-script" class="space-y-3"></div>
         </div>
+
       </div>
-    </div>
+    </section>
+
   </main>
 
   <div id="videoModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center p-4 z-50">
@@ -146,27 +125,18 @@
   </div>
 
   <script>
-    // Tab Switching Logic
-    function switchTab(element, tabId) {
+    // Smooth Scroll to Sections via Sidebar
+    function scrollToSection(sectionId) {
       document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.classList.remove('bg-red-600/10', 'text-red-500', 'font-semibold');
         btn.classList.add('text-slate-400');
       });
-      element.classList.add('bg-red-600/10', 'text-red-500', 'font-semibold');
-      element.classList.remove('text-slate-400');
+      event.currentTarget.classList.add('bg-red-600/10', 'text-red-500', 'font-semibold');
+      event.currentTarget.classList.remove('text-slate-400');
 
-      document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.add('hidden');
-      });
-
-      if(tabId === 'dashboard') {
-        document.getElementById('view-dashboard').classList.remove('hidden');
-      } else if(tabId === 'ideas') {
-        document.getElementById('view-ideas').classList.remove('hidden');
-      } else if(tabId === 'scriptWriter') {
-        document.getElementById('view-scriptWriter').classList.remove('hidden');
-      } else if(tabId === 'pipeline') {
-        document.getElementById('view-pipeline').classList.remove('hidden');
+      const target = document.getElementById(sectionId);
+      if(target) {
+        target.scrollIntoView({ behavior: 'smooth' });
       }
     }
 
@@ -204,28 +174,6 @@
       modal.classList.remove('flex');
     }
 
-    // Function to add card to both dashboard kanban and pipeline view
-    function addCardToStage(stageId, title, tagText) {
-      const cardHTML = `
-        <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 text-right shadow-sm">
-          <span class="text-xs font-semibold bg-red-500/10 text-red-400 px-2 py-0.5 rounded">${tagText}</span>
-          <p class="font-semibold text-sm mt-2">${title}</p>
-        </div>
-      `;
-
-      // Append to Dashboard Kanban
-      const targetCol = document.getElementById(stageId);
-      if(targetCol) {
-        targetCol.insertAdjacentHTML('beforeend', cardHTML);
-      }
-
-      // Append to Full Pipeline Kanban view
-      const targetColPipeline = document.getElementById(stageId + '-pipeline');
-      if(targetColPipeline) {
-        targetColPipeline.insertAdjacentHTML('beforeend', cardHTML);
-      }
-    }
-
     function addVideo() {
       const title = document.getElementById('newVideoTitle').value;
       const stage = document.getElementById('newVideoStage').value;
@@ -235,7 +183,14 @@
         return;
       }
 
-      addCardToStage(stage, title, 'مشروع');
+      const card = document.createElement('div');
+      card.className = "bg-slate-800 p-3 rounded-lg border border-slate-700 text-right shadow-sm";
+      card.innerHTML = `
+        <span class="text-xs font-semibold bg-red-500/10 text-red-400 px-2 py-0.5 rounded">مشروع</span>
+        <p class="font-semibold text-sm mt-2">${title}</p>
+      `;
+
+      document.getElementById(stage).appendChild(card);
       document.getElementById('newVideoTitle').value = '';
       closeModal();
     }
@@ -249,12 +204,21 @@
         return;
       }
 
-      // Automatically add to 'col-script' (الأفكار والسكريبت)
-      addCardToStage('col-script', title, 'سكريبت خارجي');
+      const card = document.createElement('div');
+      card.className = "bg-slate-800 p-3 rounded-lg border border-slate-700 text-right shadow-sm";
+      card.innerHTML = `
+        <span class="text-xs font-semibold bg-red-500/10 text-red-400 px-2 py-0.5 rounded">سكريبت جاهز</span>
+        <p class="font-semibold text-sm mt-2">${title}</p>
+      `;
+
+      document.getElementById('col-script').appendChild(card);
       
-      alert('تم حفظ السكريبت وإرساله بنجاح إلى خط الإنتاج (قسم الأفكار والسكريبت)!');
+      alert('تم حفظ السكريبت وإرساله بنجاح إلى خانة "الأفكار والسكريبت" في خط الإنتاج!');
       document.getElementById('scriptTitle').value = '';
       document.getElementById('scriptBody').value = '';
+      
+      // التوجه تلقائياً إلى قسم خط الإنتاج لرؤية النتيجة
+      document.getElementById('kanbanSection').scrollIntoView({ behavior: 'smooth' });
     }
   </script>
 </body>
