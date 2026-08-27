@@ -20,16 +20,16 @@
         <h1 class="text-xl font-bold tracking-wide">Youtuber <span class="text-red-500">OS</span></h1>
       </div>
       <nav class="space-y-2" id="sidebarNav">
-        <button onclick="switchTab(this)" class="nav-btn w-full flex items-center gap-3 px-3 py-2 bg-red-600/10 text-red-500 rounded-lg font-semibold transition">
+        <button onclick="switchTab(this)" class="nav-btn w-full flex items-center gap-3 px-3 py-2 bg-red-600/10 text-red-500 rounded-lg font-semibold transition cursor-pointer">
           <span>📊</span> لوحة التحكم
         </button>
-        <button onclick="switchTab(this)" class="nav-btn w-full flex items-center gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition">
+        <button onclick="switchTab(this)" class="nav-btn w-full flex items-center gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
           <span>💡</span> توليد الأفكار
         </button>
-        <button onclick="switchTab(this)" class="nav-btn w-full flex items-center gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition">
+        <button onclick="switchTab(this)" class="nav-btn w-full flex items-center gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
           <span>📝</span> كاتب السكريبت
         </button>
-        <button onclick="switchTab(this)" class="nav-btn w-full flex items-center gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition">
+        <button onclick="switchTab(this)" class="nav-btn w-full flex items-center gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
           <span>🎬</span> خط الإنتاج
         </button>
       </nav>
@@ -128,7 +128,7 @@
     </section>
   </main>
 
-  <!-- Modal / نافذة إضافة فيديو جديد -->
+  <!-- Modal -->
   <div id="videoModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center p-4">
     <div class="bg-slate-800 border border-slate-700 rounded-xl w-full max-w-md p-6 space-y-4">
       <h3 class="text-lg font-bold">إضافة مشروع فيديو جديد</h3>
@@ -145,14 +145,14 @@
         </select>
       </div>
       <div class="flex justify-end gap-2 pt-2">
-        <button onclick="closeModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-sm rounded-lg">إلغاء</button>
-        <button onclick="addVideo()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-sm font-semibold rounded-lg">حفظ وإضافة</button>
+        <button onclick="closeModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-sm rounded-lg cursor-pointer">إلغاء</button>
+        <button onclick="addVideo()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-sm font-semibold rounded-lg cursor-pointer">حفظ وإضافة</button>
       </div>
     </div>
   </div>
 
   <script>
-    let totalVideos = 3;
+    let totalVideos = 4;
 
     function generateScript() {
       const input = document.getElementById('topicInput').value;
