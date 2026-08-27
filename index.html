@@ -12,7 +12,6 @@
 </head>
 <body class="bg-slate-900 text-slate-100 flex h-screen overflow-hidden flex-row-reverse">
 
-  <!-- Sidebar (Right Side for Arabic) -->
   <aside class="w-64 bg-slate-800 border-r border-slate-700 flex flex-col justify-between p-4 shrink-0">
     <div>
       <div class="flex items-center gap-2 mb-8 px-2 justify-end">
@@ -20,23 +19,22 @@
         <span class="bg-red-600 text-white font-bold p-2 rounded-lg text-xl">YT</span>
       </div>
       <nav class="space-y-2" id="sidebarNav">
-        <button onclick="switchTab(this)" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 bg-red-600/10 text-red-500 rounded-lg font-semibold transition cursor-pointer">
+        <button onclick="switchTab(this, 'dashboard')" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 bg-red-600/10 text-red-500 rounded-lg font-semibold transition cursor-pointer">
           <span>لوحة التحكم</span> <span>📊</span>
         </button>
-        <button onclick="switchTab(this)" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
+        <button onclick="switchTab(this, 'ideas')" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
           <span>توليد الأفكار</span> <span>💡</span>
         </button>
-        <button onclick="switchTab(this)" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
+        <button onclick="switchTab(this, 'scriptWriter')" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
           <span>كاتب السكريبت</span> <span>📝</span>
         </button>
-        <button onclick="switchTab(this)" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
+        <button onclick="switchTab(this, 'pipeline')" class="nav-btn w-full flex items-center justify-end gap-3 px-3 py-2 text-slate-400 hover:bg-slate-700 rounded-lg transition cursor-pointer">
           <span>خط الإنتاج</span> <span>🎬</span>
         </button>
       </nav>
     </div>
   </aside>
 
-  <!-- Main Content -->
   <main class="flex-1 overflow-y-auto p-8">
     <header class="flex justify-between items-center mb-8">
       <button onclick="openModal()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition cursor-pointer">
@@ -47,43 +45,71 @@
       </div>
     </header>
 
-    <!-- AI Generator Section -->
-    <section class="bg-slate-800 p-6 rounded-xl border border-slate-700 mb-8">
-      <h3 class="text-lg font-bold mb-4 flex items-center justify-end gap-2">
-        <span>مولد السكريبت والعناوين بالذكاء الاصطناعي</span> <span>✨</span>
-      </h3>
-      <div class="flex gap-4 mb-4 flex-row-reverse">
-        <input id="topicInput" type="text" placeholder="أدخل موضوع الفيديو..." class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-slate-100 text-right focus:outline-none focus:border-red-500">
-        <button onclick="generateScript()" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-semibold transition cursor-pointer text-white">توليد الأفكار</button>
-      </div>
-      <div id="outputArea" class="hidden bg-slate-900 p-4 rounded-lg border border-slate-700 text-slate-300 text-sm space-y-2 text-right"></div>
-    </section>
+    <div id="view-dashboard" class="tab-content space-y-8">
+      <section class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+        <h3 class="text-lg font-bold mb-4 flex items-center justify-end gap-2">
+          <span>مولد السكريبت والعناوين بالذكاء الاصطناعي</span> <span>✨</span>
+        </h3>
+        <div class="flex gap-4 mb-4 flex-row-reverse">
+          <input id="topicInput" type="text" placeholder="أدخل موضوع الفيديو..." class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-slate-100 text-right focus:outline-none focus:border-red-500">
+          <button onclick="generateScript()" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-semibold transition cursor-pointer text-white">توليد الأفكار</button>
+        </div>
+        <div id="outputArea" class="hidden bg-slate-900 p-4 rounded-lg border border-slate-700 text-slate-300 text-sm space-y-2 text-right"></div>
+      </section>
 
-    <!-- Production Pipeline Kanban -->
-    <section>
-      <h3 class="text-lg font-bold mb-4 text-right">خط إنتاج الفيديوهات (Kanban)</h3>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <section>
+        <h3 class="text-lg font-bold mb-4 text-right">خط إنتاج الفيديوهات (Kanban)</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+            <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">جاهز للرفع</h4>
+            <div id="col-ready" class="space-y-3"></div>
+          </div>
+          <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+            <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">التصوير والمونتاج</h4>
+            <div id="col-edit" class="space-y-3"></div>
+          </div>
+          <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+            <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">الأفكار والسكريبت</h4>
+            <div id="col-script" class="space-y-3"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="view-ideas" class="tab-content hidden space-y-4 text-right">
+      <h3 class="text-xl font-bold mb-4">قسم توليد الأفكار والاستكشاف</h3>
+      <p class="text-slate-400 text-sm">استخدم شريط الذكاء الاصطناعي في لوحة التحكم لاستخراج الأفكار والعناوين المبدئية لأي موضوع ترغب بتصويره.</p>
+    </div>
+
+    <div id="view-scriptWriter" class="tab-content hidden space-y-6 text-right">
+      <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
+        <h3 class="text-xl font-bold flex items-center justify-end gap-2">
+          <span>محرر وكاتب السكريبت المتقدم</span> <span>📝</span>
+        </h3>
+        <p class="text-slate-400 text-sm">قم بلصق أو كتابة سكريبت الفيديو الجاهز من الخارج هنا، لتقسيمه وحفظه بكل مرونة.</p>
         
-        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-          <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">جاهز للرفع</h4>
-          <div id="col-ready" class="space-y-3"></div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">عنوان أو موضوع السكريبت</label>
+          <input id="scriptTitle" type="text" placeholder="مثلاً: مراجعة شاملة لهاتف آيفون الجديد..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-100 text-right focus:outline-none focus:border-red-500">
         </div>
 
-        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-          <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">التصوير والمونتاج</h4>
-          <div id="col-edit" class="space-y-3"></div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">نص السكريبت (المقدمة، التفاصيل، والخاتمة)</label>
+          <textarea id="scriptBody" rows="10" placeholder="اكتب أو الصق السكريبت هنا..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-100 text-right focus:outline-none focus:border-red-500"></textarea>
         </div>
 
-        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-          <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">الأفكار والسكريبت</h4>
-          <div id="col-script" class="space-y-3"></div>
+        <div class="flex justify-end gap-3">
+          <button onclick="saveExternalScript()" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-semibold transition cursor-pointer text-white">حفظ السكريبت وإرساله لخط الإنتاج</button>
         </div>
-
       </div>
-    </section>
+    </div>
+
+    <div id="view-pipeline" class="tab-content hidden space-y-4 text-right">
+      <h3 class="text-xl font-bold mb-4">خط الإنتاج الكامل</h3>
+      <p class="text-slate-400 text-sm">إدارة ومتابعة جميع مشاريع الفيديوهات الخاصة بك بحسب مرحلتها الحالية.</p>
+    </div>
   </main>
 
-  <!-- Modal -->
   <div id="videoModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center p-4 z-50">
     <div class="bg-slate-800 border border-slate-700 rounded-xl w-full max-w-md p-6 space-y-4 text-right">
       <h3 class="text-lg font-bold">إضافة مشروع فيديو جديد</h3>
@@ -107,6 +133,29 @@
   </div>
 
   <script>
+    // Tab Switching Logic
+    function switchTab(element, tabId) {
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-red-600/10', 'text-red-500', 'font-semibold');
+        btn.classList.add('text-slate-400');
+      });
+      element.classList.add('bg-red-600/10', 'text-red-500', 'font-semibold');
+      element.classList.remove('text-slate-400');
+
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.add('hidden');
+      });
+
+      // Show selected view (fallback to dashboard if main tab)
+      if(tabId === 'dashboard' || tabId === 'pipeline') {
+        document.getElementById('view-dashboard').classList.remove('hidden');
+      } else if(tabId === 'ideas') {
+        document.getElementById('view-ideas').classList.remove('hidden');
+      } else if(tabId === 'scriptWriter') {
+        document.getElementById('view-scriptWriter').classList.remove('hidden');
+      }
+    }
+
     function generateScript() {
       const input = document.getElementById('topicInput').value;
       const outputArea = document.getElementById('outputArea');
@@ -127,15 +176,6 @@
         <p class="font-bold text-red-400 mt-3">مقدمة خطف الانتباه (Hook):</p>
         <p class="text-xs bg-slate-800 p-2 rounded">"قبل أن تشتري أو تجرب ${input}، هناك 3 أشياء أساسية ستغير رأيك تماماً... تابع الفيديو!"</p>
       `;
-    }
-
-    function switchTab(element) {
-      document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('bg-red-600/10', 'text-red-500', 'font-semibold');
-        btn.classList.add('text-slate-400');
-      });
-      element.classList.add('bg-red-600/10', 'text-red-500', 'font-semibold');
-      element.classList.remove('text-slate-400');
     }
 
     function openModal() {
@@ -162,13 +202,37 @@
       const card = document.createElement('div');
       card.className = "bg-slate-800 p-3 rounded-lg border border-slate-700 text-right";
       card.innerHTML = `
-        <span class="text-xs font-semibold bg-red-500/10 text-red-400 px-2 py-0.5 rounded">جديد</span>
+        <span class="text-xs font-semibold bg-red-500/10 text-red-400 px-2 py-0.5 rounded">مشروع</span>
         <p class="font-semibold text-sm mt-2">${title}</p>
       `;
 
       document.getElementById(stage).appendChild(card);
       document.getElementById('newVideoTitle').value = '';
       closeModal();
+    }
+
+    // Save External Script and send it to Kanban pipeline
+    function saveExternalScript() {
+      const title = document.getElementById('scriptTitle').value;
+      const body = document.getElementById('scriptBody').value;
+
+      if(!title.trim() || !body.trim()) {
+        alert('يرجى إدخال عنوان السكريبت والنص كاملاً قبل الحفظ!');
+        return;
+      }
+
+      const card = document.createElement('div');
+      card.className = "bg-slate-800 p-3 rounded-lg border border-slate-700 text-right";
+      card.innerHTML = `
+        <span class="text-xs font-semibold bg-red-500/10 text-red-400 px-2 py-0.5 rounded">سكريبت خارجي</span>
+        <p class="font-semibold text-sm mt-2">${title}</p>
+      `;
+
+      document.getElementById('col-script').appendChild(card);
+      
+      alert('تم حفظ السكريبت وإرساله بنجاح إلى قسم "الأفكار والسكريبت" في خط الإنتاج!');
+      document.getElementById('scriptTitle').value = '';
+      document.getElementById('scriptBody').value = '';
     }
   </script>
 </body>
