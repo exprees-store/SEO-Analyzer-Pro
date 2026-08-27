@@ -62,15 +62,15 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
             <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">جاهز للرفع</h4>
-            <div id="col-ready" class="space-y-3"></div>
+            <div id="col-ready" class="kanban-column space-y-3"></div>
           </div>
           <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
             <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">التصوير والمونتاج</h4>
-            <div id="col-edit" class="space-y-3"></div>
+            <div id="col-edit" class="kanban-column space-y-3"></div>
           </div>
           <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
             <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">الأفكار والسكريبت</h4>
-            <div id="col-script" class="space-y-3"></div>
+            <div id="col-script" class="kanban-column space-y-3"></div>
           </div>
         </div>
       </section>
@@ -86,7 +86,7 @@
         <h3 class="text-xl font-bold flex items-center justify-end gap-2">
           <span>محرر وكاتب السكريبت المتقدم</span> <span>📝</span>
         </h3>
-        <p class="text-slate-400 text-sm">قم بلصق أو كتابة سكريبت الفيديو الجاهز من الخارج هنا، لتقسيمه وحفظه بكل مرونة.</p>
+        <p class="text-slate-400 text-sm">قم بلصق أو كتابة سكريبت الفيديو الجاهز من الخارج هنا، لتقسيمه وحفظه لخط الإنتاج.</p>
         
         <div>
           <label class="block text-xs text-slate-400 mb-1">عنوان أو موضوع السكريبت</label>
@@ -104,9 +104,22 @@
       </div>
     </div>
 
-    <div id="view-pipeline" class="tab-content hidden space-y-4 text-right">
-      <h3 class="text-xl font-bold mb-4">خط الإنتاج الكامل</h3>
-      <p class="text-slate-400 text-sm">إدارة ومتابعة جميع مشاريع الفيديوهات الخاصة بك بحسب مرحلتها الحالية.</p>
+    <div id="view-pipeline" class="tab-content hidden space-y-6 text-right">
+      <h3 class="text-xl font-bold mb-4">خط الإنتاج الكامل (Kanban)</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+          <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">جاهز للرفع</h4>
+          <div id="col-ready-pipeline" class="kanban-column space-y-3"></div>
+        </div>
+        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+          <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">التصوير والمونتاج</h4>
+          <div id="col-edit-pipeline" class="kanban-column space-y-3"></div>
+        </div>
+        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+          <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase text-right">الأفكار والسكريبت</h4>
+          <div id="col-script-pipeline" class="kanban-column space-y-3"></div>
+        </div>
+      </div>
     </div>
   </main>
 
@@ -146,13 +159,14 @@
         content.classList.add('hidden');
       });
 
-      // Show selected view (fallback to dashboard if main tab)
-      if(tabId === 'dashboard' || tabId === 'pipeline') {
+      if(tabId === 'dashboard') {
         document.getElementById('view-dashboard').classList.remove('hidden');
       } else if(tabId === 'ideas') {
         document.getElementById('view-ideas').classList.remove('hidden');
       } else if(tabId === 'scriptWriter') {
         document.getElementById('view-scriptWriter').classList.remove('hidden');
+      } else if(tabId === 'pipeline') {
+        document.getElementById('view-pipeline').classList.remove('hidden');
       }
     }
 
@@ -190,6 +204,28 @@
       modal.classList.remove('flex');
     }
 
+    // Function to add card to both dashboard kanban and pipeline view
+    function addCardToStage(stageId, title, tagText) {
+      const cardHTML = `
+        <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 text-right shadow-sm">
+          <span class="text-xs font-semibold bg-red-500/10 text-red-400 px-2 py-0.5 rounded">${tagText}</span>
+          <p class="font-semibold text-sm mt-2">${title}</p>
+        </div>
+      `;
+
+      // Append to Dashboard Kanban
+      const targetCol = document.getElementById(stageId);
+      if(targetCol) {
+        targetCol.insertAdjacentHTML('beforeend', cardHTML);
+      }
+
+      // Append to Full Pipeline Kanban view
+      const targetColPipeline = document.getElementById(stageId + '-pipeline');
+      if(targetColPipeline) {
+        targetColPipeline.insertAdjacentHTML('beforeend', cardHTML);
+      }
+    }
+
     function addVideo() {
       const title = document.getElementById('newVideoTitle').value;
       const stage = document.getElementById('newVideoStage').value;
@@ -199,19 +235,11 @@
         return;
       }
 
-      const card = document.createElement('div');
-      card.className = "bg-slate-800 p-3 rounded-lg border border-slate-700 text-right";
-      card.innerHTML = `
-        <span class="text-xs font-semibold bg-red-500/10 text-red-400 px-2 py-0.5 rounded">مشروع</span>
-        <p class="font-semibold text-sm mt-2">${title}</p>
-      `;
-
-      document.getElementById(stage).appendChild(card);
+      addCardToStage(stage, title, 'مشروع');
       document.getElementById('newVideoTitle').value = '';
       closeModal();
     }
 
-    // Save External Script and send it to Kanban pipeline
     function saveExternalScript() {
       const title = document.getElementById('scriptTitle').value;
       const body = document.getElementById('scriptBody').value;
@@ -221,16 +249,10 @@
         return;
       }
 
-      const card = document.createElement('div');
-      card.className = "bg-slate-800 p-3 rounded-lg border border-slate-700 text-right";
-      card.innerHTML = `
-        <span class="text-xs font-semibold bg-red-500/10 text-red-400 px-2 py-0.5 rounded">سكريبت خارجي</span>
-        <p class="font-semibold text-sm mt-2">${title}</p>
-      `;
-
-      document.getElementById('col-script').appendChild(card);
+      // Automatically add to 'col-script' (الأفكار والسكريبت)
+      addCardToStage('col-script', title, 'سكريبت خارجي');
       
-      alert('تم حفظ السكريبت وإرساله بنجاح إلى قسم "الأفكار والسكريبت" في خط الإنتاج!');
+      alert('تم حفظ السكريبت وإرساله بنجاح إلى خط الإنتاج (قسم الأفكار والسكريبت)!');
       document.getElementById('scriptTitle').value = '';
       document.getElementById('scriptBody').value = '';
     }
