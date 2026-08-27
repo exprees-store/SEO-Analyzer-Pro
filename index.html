@@ -34,15 +34,6 @@
         </button>
       </nav>
     </div>
-    <div class="border-t border-slate-700 pt-4">
-      <div class="flex items-center gap-3 px-2">
-        <div class="w-10 h-10 rounded-full bg-slate-600 flex items-center justify-center font-bold">ص</div>
-        <div>
-          <p class="text-sm font-semibold">قناة التكنولوجيا</p>
-          <p class="text-xs text-slate-400">خطة محترف (Pro)</p>
-        </div>
-      </div>
-    </div>
   </aside>
 
   <!-- Main Content -->
@@ -50,32 +41,11 @@
     <header class="flex justify-between items-center mb-8">
       <div>
         <h2 class="text-2xl font-bold">مرحباً بك مجدداً 👋</h2>
-        <p class="text-slate-400 text-sm">إليك نظرة عامة على قناتك اليوم.</p>
       </div>
       <button onclick="openModal()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition cursor-pointer">
         <span>+</span> إنشاء فيديو جديد
       </button>
     </header>
-
-    <!-- Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-      <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-        <p class="text-slate-400 text-sm mb-1">المشتركون الجدد</p>
-        <h3 class="text-2xl font-bold text-green-400">+12,450</h3>
-      </div>
-      <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-        <p class="text-slate-400 text-sm mb-1">معدل النقر (CTR)</p>
-        <h3 class="text-2xl font-bold text-blue-400">8.4%</h3>
-      </div>
-      <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-        <p class="text-slate-400 text-sm mb-1">الفيديوهات قيد الإنتاج</p>
-        <h3 id="videoCountText" class="text-2xl font-bold text-yellow-400">4 فيديوهات</h3>
-      </div>
-      <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-        <p class="text-slate-400 text-sm mb-1">أرباح الرعايات</p>
-        <h3 class="text-2xl font-bold text-purple-400">$3,200</h3>
-      </div>
-    </div>
 
     <!-- AI Generator Section -->
     <section class="bg-slate-800 p-6 rounded-xl border border-slate-700 mb-8">
@@ -96,32 +66,17 @@
         
         <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
           <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase">الأفكار والسكريبت</h4>
-          <div id="col-script" class="space-y-3">
-            <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
-              <span class="text-xs font-semibold bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded">مراجعة</span>
-              <p class="font-semibold text-sm mt-2">مراجعة جهاز M4 Mac Studio</p>
-            </div>
-          </div>
+          <div id="col-script" class="space-y-3"></div>
         </div>
 
         <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
           <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase">التصوير والمونتاج</h4>
-          <div id="col-edit" class="space-y-3">
-            <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
-              <span class="text-xs font-semibold bg-yellow-500/10 text-yellow-400 px-2 py-0.5 rounded">مونتاج</span>
-              <p class="font-semibold text-sm mt-2">كيف تبني تطبيق SaaS؟</p>
-            </div>
-          </div>
+          <div id="col-edit" class="space-y-3"></div>
         </div>
 
         <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
           <h4 class="text-sm font-bold text-slate-400 mb-3 uppercase">جاهز للرفع</h4>
-          <div id="col-ready" class="space-y-3">
-            <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
-              <span class="text-xs font-semibold bg-green-500/10 text-green-400 px-2 py-0.5 rounded">مكتمل</span>
-              <p class="font-semibold text-sm mt-2">مستقبل الذكاء الاصطناعي</p>
-            </div>
-          </div>
+          <div id="col-ready" class="space-y-3"></div>
         </div>
 
       </div>
@@ -152,7 +107,7 @@
   </div>
 
   <script>
-    let totalVideos = 4;
+    // --- JavaScript لجعل الزر يعمل ---
 
     function generateScript() {
       const input = document.getElementById('topicInput').value;
@@ -163,18 +118,21 @@
         return;
       }
 
+      // إظهار منطقة النتائج وتوليد نصوص عشوائية للمعاينة
       outputArea.classList.remove('hidden');
       outputArea.innerHTML = `
-        <p class="font-bold text-red-400">مقترحات عناوين جذابة:</p>
+        <p class="font-bold text-red-400">مقترحات عناوين جذابة (محاكاة):</p>
         <ul class="list-disc list-inside space-y-1 text-xs">
           <li>1. ${input} - هل يستحق الشراء؟</li>
           <li>2. السر الذي لا يخبرك به أحد عن ${input}</li>
+          <li>3. تجربتي الكاملة بعد استخدام ${input}</li>
         </ul>
         <p class="font-bold text-red-400 mt-3">مقدمة خطف الانتباه (Hook):</p>
-        <p class="text-xs bg-slate-800 p-2 rounded">"قبل أن تشتري أو تجرب ${input}، هناك 3 أشياء أساسية ستغير رأيك تماماً..."</p>
+        <p class="text-xs bg-slate-800 p-2 rounded">"قبل أن تشتري أو تجرب ${input}، هناك 3 أشياء أساسية ستغير رأيك تماماً... تابع الفيديو!"</p>
       `;
     }
 
+    // --- بقية وظائف الواجهة ---
     function switchTab(element) {
       document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.classList.remove('bg-red-600/10', 'text-red-500', 'font-semibold');
@@ -211,9 +169,6 @@
       `;
 
       document.getElementById(stage).appendChild(card);
-      totalVideos++;
-      document.getElementById('videoCountText').innerText = totalVideos + " فيديوهات";
-
       document.getElementById('newVideoTitle').value = '';
       closeModal();
     }
