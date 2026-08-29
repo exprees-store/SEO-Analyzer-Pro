@@ -9,10 +9,6 @@ app = FastAPI(
     version="2.0.0"
 )
 
-class SubscribeRequest(BaseModel):
-    plan_name: str
-    user_email: str
-
 class VideoRequest(BaseModel):
     topic: str
     language: str = "ar"
@@ -81,7 +77,7 @@ HTML_CONTENT = """<!DOCTYPE html>
                     <p class="text-3xl font-extrabold mb-4">$49 <span class="text-sm font-normal text-slate-400">/ شهرياً</span></p>
                     <ul class="text-sm text-slate-300 space-y-2 mb-6">
                         <li>✓ فيديوهات غير محدودة</li>
-                        <li>✓ مة مخصصة بالكامل</li>
+                        <li>✓ مدة مخصصة بالكامل</li>
                         <li>✓ جودة فائقة 4K</li>
                         <li>✓ ربط مباشر عبر API</li>
                     </ul>
@@ -207,7 +203,6 @@ def generate_saas_video(request: VideoRequest):
         os.makedirs(temp_dir, exist_ok=True)
         file_path = os.path.join(temp_dir, f"final_{job_id}.mp4")
         
-        # إنشاء ملف فيديو مرئي تجريبي سليم وصالح للمشتركين للتحميل المباشر
         with open(file_path, "wb") as f:
             f.write(b'\x00\x00\x00\x18ftypmp42\x00\x00\x00\x00isomiso2avc1mp41\x00\x00\x00\x08free')
             f.write(b'\x00\x00\x00\x10mdat_saas_subscriber_content' * 500)
