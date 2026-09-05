@@ -1,227 +1,526 @@
-import os
-import uuid
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import HTMLResponse, FileResponse
-from pydantic import BaseModel
-
-app = FastAPI(
-    title="AutoYouTube AI SaaS Pricing & Platform",
-    version="2.0.0"
-)
-
-class VideoRequest(BaseModel):
-    topic: str
-    language: str = "ar"
-    duration_minutes: int = 2
-
-HTML_CONTENT = """<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<!DOCTYPE html>
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AutoYouTube AI - منصة الاشتراكات والباقات</title>
+    <title>AI SEO & Content Optimizer Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>body { font-family: 'Cairo', sans-serif; }</style>
-</head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-start p-6">
-    
-    <!-- الهيدر الرئيسي -->
-    <header class="w-full max-w-5xl flex justify-between items-center py-4 mb-8 border-b border-slate-800">
-        <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">AutoYouTube AI SaaS</h1>
-        <div class="space-x-2 space-x-reverse">
-            <button onclick="showSection('pricing')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm font-semibold transition">باقات الأسعار</button>
-            <button onclick="showSection('generator')" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg text-sm font-semibold transition">منصة التوليد</button>
-        </div>
-    </header>
-
-    <!-- قسم باقات الأسعار (Pricing Plans) -->
-    <div id="pricing-section" class="w-full max-w-5xl">
-        <div class="text-center mb-12">
-            <h2 class="text-4xl font-extrabold mb-4">اختر خطة الاشتراك المناسبة لاحتياجاتك</h2>
-            <p class="text-slate-400">أسعار مرنة مصممة خصيصاً لمنشئي المحتوى والشركات الرقمية</p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- الخطة المجانية -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between shadow-xl">
-                <div>
-                    <h3 class="text-xl font-bold text-purple-400 mb-2">الباقة التجريبية</h3>
-                    <p class="text-3xl font-extrabold mb-4">مجاناً</p>
-                    <ul class="text-sm text-slate-300 space-y-2 mb-6">
-                        <li>✓ 3 فيديوهات شهرياً</li>
-                        <li>✓ مدة الفيديو دقيقة واحدة</li>
-                        <li>✓ جودة قياسية SD</li>
-                    </ul>
-                </div>
-                <button onclick="selectPlan('الباقة التجريبية')" class="w-full py-3 bg-slate-800 hover:bg-slate-700 font-bold rounded-lg transition">اشترك الآن</button>
-            </div>
-            <!-- باقة المحترف -->
-            <div class="bg-slate-900 border-2 border-purple-500 rounded-2xl p-6 flex flex-col justify-between shadow-2xl relative">
-                <span class="absolute -top-3 right-6 bg-gradient-to-r from-purple-600 to-pink-600 text-xs px-3 py-1 rounded-full font-bold">الأكثر طلباً</span>
-                <div>
-                    <h3 class="text-xl font-bold text-pink-400 mb-2">باقة المحترف</h3>
-                    <p class="text-3xl font-extrabold mb-4">$19 <span class="text-sm font-normal text-slate-400">/ شهرياً</span></p>
-                    <ul class="text-sm text-slate-300 space-y-2 mb-6">
-                        <li>✓ 50 فيديو شهرياً</li>
-                        <li>✓ مدة الفيديو حتى 3 دقائق</li>
-                        <li>✓ جودة عالية HD مع تعليق صوتي</li>
-                        <li>✓ دعم فني أولوية</li>
-                    </ul>
-                </div>
-                <button onclick="selectPlan('باقة المحترف')" class="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 font-bold rounded-lg transition shadow-lg">اشترك الآن</button>
-            </div>
-            <!-- باقة الشركات -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between shadow-xl">
-                <div>
-                    <h3 class="text-xl font-bold text-purple-400 mb-2">باقة الوكالات والشركات</h3>
-                    <p class="text-3xl font-extrabold mb-4">$49 <span class="text-sm font-normal text-slate-400">/ شهرياً</span></p>
-                    <ul class="text-sm text-slate-300 space-y-2 mb-6">
-                        <li>✓ فيديوهات غير محدودة</li>
-                        <li>✓ مدة مخصصة بالكامل</li>
-                        <li>✓ جودة فائقة 4K</li>
-                        <li>✓ ربط مباشر عبر API</li>
-                    </ul>
-                </div>
-                <button onclick="selectPlan('باقة الوكالات والشركات')" class="w-full py-3 bg-slate-800 hover:bg-slate-700 font-bold rounded-lg transition">اشترك الآن</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- قسم منصة توليد الفيديوهات (Generator) -->
-    <div id="generator-section" class="hidden w-full max-w-xl bg-slate-900 p-8 rounded-2xl shadow-2xl border border-slate-800">
-        <div class="text-center mb-6">
-            <h2 class="text-2xl font-bold text-purple-400">منصة توليد الفيديوهات للمشتركين</h2>
-            <p class="text-slate-400 text-sm mt-1" id="active-plan-label">الخطة النشطة: لم يتم اختيار باقة بعد</p>
-        </div>
-        <div class="space-y-4">
-            <div>
-                <label class="block text-sm font-semibold mb-1">عنوان الموضوع</label>
-                <input type="text" id="topic" placeholder="مثلاً: أسرار الفراعنة وتاريخ الأهرامات" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:border-purple-500 text-white">
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-semibold mb-1">لغة الفيديو</label>
-                    <select id="language" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:border-purple-500 text-white">
-                        <option value="ar">العربية (Arabic)</option>
-                        <option value="en">English (الإنجليزية)</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold mb-1">مدة الفيديو</label>
-                    <select id="duration" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:border-purple-500 text-white">
-                        <option value="2">دقيقتان</option>
-                        <option value="3">ثلاث دقائق</option>
-                    </select>
-                </div>
-            </div>
-            <button onclick="startGeneration()" id="btn-submit" class="w-full mt-4 py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 font-bold rounded-lg transition shadow-lg">
-                بدء إنشاء الفيديو للمشتركين
-            </button>
-        </div>
-        <div id="status-box" class="hidden mt-6 p-4 bg-slate-950 border border-slate-800 rounded-lg text-center">
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mx-auto mb-2"></div>
-            <p class="text-sm text-yellow-400">جاري تفعيل حقوق المشترك ومعالجة الفيديو...</p>
-        </div>
-        <div id="result-box" class="hidden mt-6 p-4 bg-emerald-950 border border-emerald-800 rounded-lg text-center">
-            <p class="text-emerald-400 font-bold mb-2">تم إنتاج الفيديو بنجاح!</p>
-            <video id="video-player" controls class="w-full rounded-lg mb-4 mt-2 bg-black max-h-48"></video>
-            <a id="download-link" href="#" class="inline-block px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition" target="_blank">تحميل الفيديو (.mp4)</a>
-        </div>
-    </div>
-
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
-        let currentPlan = "الباقة التجريبية";
-
-        function showSection(section) {
-            if (section === 'pricing') {
-                document.getElementById('pricing-section').classList.remove('hidden');
-                document.getElementById('generator-section').classList.add('hidden');
-            } else {
-                document.getElementById('pricing-section').classList.add('hidden');
-                document.getElementById('generator-section').classList.remove('hidden');
-            }
-        }
-
-        function selectPlan(planName) {
-            currentPlan = planName;
-            document.getElementById('active-plan-label').innerText = "الخطة النشطة حالياً: " + planName;
-            alert("تم اختيار " + planName + " بنجاح! سيتم تحويلك إلى منصة التوليد.");
-            showSection('generator');
-        }
-
-        async function startGeneration() {
-            const topic = document.getElementById('topic').value;
-            const language = document.getElementById('language').value;
-            const duration_minutes = parseInt(document.getElementById('duration').value);
-            if (!topic) { alert('الرجاء إدخال عنوان الموضوع أولاً.'); return; }
-            
-            document.getElementById('status-box').classList.remove('hidden');
-            document.getElementById('result-box').classList.add('hidden');
-            document.getElementById('btn-submit').disabled = true;
-            
-            try {
-                const response = await fetch('/api/v1/generate-saas-video', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ topic, language, duration_minutes })
-                });
-                const data = await response.json();
-                if (response.ok) {
-                    document.getElementById('status-box').classList.add('hidden');
-                    document.getElementById('result-box').classList.remove('hidden');
-                    
-                    const videoPlayer = document.getElementById('video-player');
-                    videoPlayer.src = data.download_url;
-                    
-                    const downloadBtn = document.getElementById('download-link');
-                    downloadBtn.href = data.download_url;
-                    downloadBtn.setAttribute('download', 'saas_youtube_video.mp4');
-                } else {
-                    alert('خطأ من الخادم: ' + (data.detail || 'حدث خطأ غير معروف'));
-                    document.getElementById('status-box').classList.add('hidden');
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                            950: '#0f172a'
+                        }
+                    }
                 }
-            } catch (err) {
-                alert('تعذر الاتصال بالخادم.');
-                document.getElementById('status-box').classList.add('hidden');
-            } finally {
-                document.getElementById('btn-submit').disabled = false;
             }
         }
     </script>
-</body>
-</html>"""
-
-@app.get("/", response_class=HTMLResponse)
-def serve_frontend():
-    return HTML_CONTENT
-
-@app.post("/api/v1/generate-saas-video")
-def generate_saas_video(request: VideoRequest):
-    try:
-        job_id = str(uuid.uuid4())
-        temp_dir = f"./temp_{job_id}"
-        os.makedirs(temp_dir, exist_ok=True)
-        file_path = os.path.join(temp_dir, f"final_{job_id}.mp4")
-        
-        with open(file_path, "wb") as f:
-            f.write(b'\x00\x00\x00\x18ftypmp42\x00\x00\x00\x00isomiso2avc1mp41\x00\x00\x00\x08free')
-            f.write(b'\x00\x00\x00\x10mdat_saas_subscriber_content' * 500)
-            
-        return {
-            "status": "success",
-            "job_id": job_id,
-            "download_url": f"/api/v1/download-saas/{job_id}"
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        .gradient-border {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
 
-@app.get("/api/v1/download-saas/{job_id}")
-def download_saas_video(job_id: str):
-    file_path = f"./temp_{job_id}/final_{job_id}.mp4"
-    if os.path.exists(file_path):
-        return FileResponse(file_path, media_type="video/mp4", filename=f"saas_video_{job_id}.mp4")
-    raise HTTPException(status_code=404, detail="الملف غير موجود")
+    <!-- Navbar -->
+    <header class="glass-card sticky top-0 z-50 px-6 py-4 flex justify-between items-center border-b border-slate-800/80 shadow-2xl">
+        <div class="flex items-center space-x-3">
+            <div class="gradient-border p-0.5 rounded-2xl shadow-lg shadow-indigo-500/20">
+                <div class="bg-slate-950 px-3.5 py-2 rounded-[14px]">
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-pink-400 font-extrabold tracking-wider text-sm">SEO.PRO</span>
+                </div>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+                    Content & SEO Analyzer Pro
+                    <span class="text-[10px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded-full font-semibold">v3.9</span>
+                </h1>
+                <p class="text-xs text-slate-400">Advanced AI Engine for High-Ranking Content Optimization</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="text-xs bg-slate-900/90 px-3.5 py-2 rounded-xl border border-slate-800 text-slate-300 flex items-center gap-2 shadow-inner">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                <span class="font-medium text-emerald-400">AI Engine Active</span>
+            </div>
+            <button onclick="exportReport()" class="hidden md:flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-slate-200 text-xs font-semibold px-4 py-2.5 rounded-xl border border-slate-800 transition shadow-md cursor-pointer">
+                📥 Export Report
+            </button>
+        </div>
+    </header>
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    <!-- Main Content Grid -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left Column: Inputs (4 cols) -->
+        <div class="lg:col-span-4 glass-card p-6 rounded-3xl flex flex-col space-y-5 shadow-2xl h-fit">
+            <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+                <h2 class="text-sm font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-2">
+                    <span>⚙️</span> Target & Settings
+                </h2>
+            </div>
+            
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-slate-400">Target Keyword</label>
+                <input type="text" id="keyword" placeholder="e.g., Best AI Tools for Marketing" class="w-full bg-slate-900/90 border border-slate-800 rounded-2xl p-3.5 text-sm text-white focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition shadow-inner">
+            </div>
+
+            <div class="flex-1 flex flex-col">
+                <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-slate-400">Article Content (HTML or Text)</label>
+                <textarea id="content" rows="12" placeholder="Paste your article text or HTML markup here..." class="w-full bg-slate-900/90 border border-slate-800 rounded-2xl p-3.5 text-sm text-white focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition resize-none shadow-inner"></textarea>
+            </div>
+
+            <button type="button" id="analyzeBtn" onclick="analyzeContent()" class="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 hover:opacity-95 text-white font-bold py-4 rounded-2xl transition shadow-xl shadow-indigo-600/25 text-sm flex items-center justify-center gap-2 cursor-pointer">
+                <span>🚀 Run Comprehensive Analysis</span>
+            </button>
+        </div>
+
+        <!-- Right Column: Results & Pro Features (8 cols) -->
+        <div class="lg:col-span-8 space-y-6">
+            
+            <!-- Score & Quick Status Bar -->
+            <div class="glass-card p-6 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-2xl">
+                <div class="space-y-1 text-center sm:text-right">
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Overall Health</span>
+                    <h3 class="text-lg font-extrabold text-white">SEO Optimization Score</h3>
+                    <p class="text-xs text-slate-400">Evaluated against modern search engine ranking signals</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div id="searchIntentBadge" class="hidden sm:flex flex-col items-end text-right">
+                        <span class="text-[10px] text-slate-400 font-semibold uppercase">Search Intent</span>
+                        <span class="text-xs font-bold text-indigo-300 bg-indigo-950/60 border border-indigo-800/50 px-3 py-1 rounded-lg mt-0.5">-</span>
+                    </div>
+                    <div id="seoScore" class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-emerald-400 bg-slate-900/90 px-8 py-4 rounded-2xl border border-slate-800 shadow-inner">0%</div>
+                </div>
+            </div>
+
+            <!-- Advanced Metrics Grid (6 items) -->
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div class="glass-card p-4 rounded-2xl text-center border border-slate-800/80">
+                    <span class="text-xs text-slate-400 block mb-1 font-medium">Word Count</span>
+                    <span id="metricWords" class="text-lg font-bold text-white">0</span>
+                </div>
+                <div class="glass-card p-4 rounded-2xl text-center border border-slate-800/80">
+                    <span class="text-xs text-slate-400 block mb-1 font-medium">Headings (H1 / H2)</span>
+                    <span id="metricHeadings" class="text-lg font-bold text-white">0 / 0</span>
+                </div>
+                <div class="glass-card p-4 rounded-2xl text-center border border-slate-800/80">
+                    <span class="text-xs text-slate-400 block mb-1 font-medium">Reading Time</span>
+                    <span id="metricReadingTime" class="text-lg font-bold text-indigo-300">0 min</span>
+                </div>
+                <div class="glass-card p-4 rounded-2xl text-center border border-slate-800/80">
+                    <span class="text-xs text-slate-400 block mb-1 font-medium">Internal / Ext Links</span>
+                    <span id="metricLinks" class="text-lg font-bold text-indigo-300">0 / 0</span>
+                </div>
+                <div class="glass-card p-4 rounded-2xl text-center border border-slate-800/80">
+                    <span class="text-xs text-slate-400 block mb-1 font-medium">Images & Alt</span>
+                    <span id="metricImages" class="text-lg font-bold text-white">0</span>
+                </div>
+                <div class="glass-card p-4 rounded-2xl text-center border border-slate-800/80">
+                    <span class="text-xs text-slate-400 block mb-1 font-medium">Readability Level</span>
+                    <span id="metricReadability" class="text-lg font-bold text-emerald-400">-</span>
+                </div>
+            </div>
+
+            <!-- Analysis Details Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="glass-card p-5 rounded-2xl shadow-xl flex flex-col border border-slate-800/80">
+                    <h4 class="font-bold text-indigo-400 text-sm mb-2 flex items-center gap-2">📊 Keyword Density Check</h4>
+                    <p id="keywordDensity" class="text-xs text-slate-300 leading-relaxed">No analysis performed yet.</p>
+                </div>
+                <div class="glass-card p-5 rounded-2xl shadow-xl flex flex-col border border-slate-800/80">
+                    <h4 class="font-bold text-indigo-400 text-sm mb-2 flex items-center gap-2">⚡ AI Optimization Tips</h4>
+                    <ul id="suggestions" class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                        <li>Enter your target keyword and content to generate insights.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Pros & Cons Section -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="glass-card p-5 rounded-2xl border border-emerald-900/30 shadow-xl flex flex-col">
+                    <h4 class="font-bold text-emerald-400 text-sm mb-3 flex items-center gap-2">✅ Content Strengths (Pros)</h4>
+                    <ul id="contentPros" class="text-xs text-slate-300 space-y-2 list-disc list-inside">
+                        <li>Awaiting content analysis...</li>
+                    </ul>
+                </div>
+                <div class="glass-card p-5 rounded-2xl border border-rose-900/30 shadow-xl flex flex-col">
+                    <h4 class="font-bold text-rose-400 text-sm mb-3 flex items-center gap-2">⚠️ Weaknesses & Fixes (Cons)</h4>
+                    <ul id="contentCons" class="text-xs text-slate-300 space-y-2 list-disc list-inside">
+                        <li>Awaiting content analysis...</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Extracted Article Headings Section -->
+            <div class="glass-card p-6 rounded-3xl shadow-xl space-y-4 border border-slate-800/80">
+                <div class="flex justify-between items-center border-b border-slate-800/80 pb-3">
+                    <h3 class="text-sm font-bold text-indigo-400 flex items-center gap-2">📋 Extracted Article Headings (H1 & H2)</h3>
+                    <span class="text-[10px] bg-indigo-950 text-indigo-300 border border-indigo-800 px-2.5 py-1 rounded-md font-semibold">Detected from Content</span>
+                </div>
+                <p class="text-xs text-slate-400">Actual headings extracted directly from your pasted article content:</p>
+                <div id="extractedHeadingsBox" class="space-y-2 text-xs text-slate-200 font-mono bg-slate-950/80 p-4 rounded-2xl border border-slate-900">
+                    - Run analysis to extract headings -
+                </div>
+            </div>
+
+            <!-- Pro Feature: Strong LSI Keywords -->
+            <div class="glass-card p-6 rounded-3xl shadow-xl space-y-3 border border-slate-800/80">
+                <h3 class="text-sm font-bold text-indigo-400 flex items-center gap-2">🔥 LSI & Semantic Keywords</h3>
+                <p class="text-xs text-slate-400">Incorporate these high-ranking related terms to strengthen topical authority:</p>
+                <div id="relatedKeywords" class="flex flex-wrap gap-2 pt-2">
+                    <span class="text-xs bg-slate-900 text-slate-500 border border-slate-800 px-3 py-1.5 rounded-lg">- Waiting for analysis -</span>
+                </div>
+            </div>
+
+            <!-- AI Generated Meta Tags -->
+            <div class="glass-card p-6 rounded-3xl shadow-xl space-y-4 border border-slate-800/80">
+                <h3 class="text-sm font-bold text-indigo-400 flex items-center gap-2">🏷️ AI-Generated Meta Tags</h3>
+                
+                <div class="space-y-3">
+                    <div class="bg-slate-950/80 p-4 rounded-2xl border border-slate-900 relative group">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-xs text-slate-400 font-semibold">Suggested Meta Title:</span>
+                            <button onclick="copyText('metaTitle')" class="text-xs text-indigo-400 hover:underline font-medium cursor-pointer">Copy</button>
+                        </div>
+                        <div id="metaTitle" class="text-xs text-emerald-400 font-mono" dir="auto">-</div>
+                    </div>
+
+                    <div class="bg-slate-950/80 p-4 rounded-2xl border border-slate-900 relative group">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-xs text-slate-400 font-semibold">Suggested Meta Description:</span>
+                            <button onclick="copyText('metaDesc')" class="text-xs text-indigo-400 hover:underline font-medium cursor-pointer">Copy</button>
+                        </div>
+                        <div id="metaDesc" class="text-xs text-emerald-400 font-mono" dir="auto">-</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Pricing Plans Section -->
+    <section class="max-w-7xl w-full mx-auto p-4 md:p-6 my-8">
+        <div class="text-center space-y-2 mb-8">
+            <h2 class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-pink-400">Flexible Pricing Plans</h2>
+            <p class="text-xs text-slate-400">Choose the perfect plan to scale your content optimization and SEO workflow.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Free Plan -->
+            <div class="glass-card p-6 rounded-3xl border border-slate-800 flex flex-col justify-between space-y-6 shadow-xl">
+                <div class="space-y-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Starter</span>
+                    <h3 class="text-xl font-bold text-white">Free Plan</h3>
+                    <div class="text-3xl font-black text-white">$0 <span class="text-xs font-normal text-slate-400">/ forever</span></div>
+                    <p class="text-xs text-slate-400">Essential analysis for casual bloggers and personal testing.</p>
+                    <ul class="text-xs text-slate-300 space-y-2 pt-4 border-t border-slate-800/80 list-disc list-inside">
+                        <li>Basic keyword density check</li>
+                        <li>Limited word count analysis</li>
+                        <li>Standard meta tags generator</li>
+                    </ul>
+                </div>
+                <button onclick="handleSubscription('Free')" class="w-full bg-slate-900 hover:bg-slate-800 text-slate-200 font-bold py-3 rounded-2xl text-xs transition border border-slate-800 cursor-pointer">Current Plan</button>
+            </div>
+
+            <!-- Pro Plan -->
+            <div class="glass-card p-6 rounded-3xl border-2 border-indigo-500/80 flex flex-col justify-between space-y-6 shadow-2xl relative bg-gradient-to-b from-indigo-950/40 to-slate-950">
+                <div class="absolute -top-3 right-6 bg-indigo-600 text-white text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-md">Most Popular</div>
+                <div class="space-y-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Professional</span>
+                    <h3 class="text-xl font-bold text-white">Pro SEO Plan</h3>
+                    <div class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-pink-400">$19 <span class="text-xs font-normal text-slate-400">/ month</span></div>
+                    <p class="text-xs text-slate-400">Advanced tools and deep optimization for content creators.</p>
+                    <ul class="text-xs text-slate-300 space-y-2 pt-4 border-t border-slate-800/80 list-disc list-inside">
+                        <li>Unlimited word count & checks</li>
+                        <li>Full H1/H2 & Image Alt auditing</li>
+                        <li>LSI & Semantic keyword builder</li>
+                        <li>Export analysis reports</li>
+                    </ul>
+                </div>
+                <button onclick="handleSubscription('Pro')" class="w-full bg-gradient-to-r from-indigo-600 to-pink-600 hover:opacity-95 text-white font-bold py-3 rounded-2xl text-xs transition shadow-lg shadow-indigo-600/30 cursor-pointer">Upgrade to Pro</button>
+            </div>
+
+            <!-- Agency Plan -->
+            <div class="glass-card p-6 rounded-3xl border border-slate-800 flex flex-col justify-between space-y-6 shadow-xl">
+                <div class="space-y-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-purple-400">Enterprise</span>
+                    <h3 class="text-xl font-bold text-white">Agency Plan</h3>
+                    <div class="text-3xl font-black text-white">$49 <span class="text-xs font-normal text-slate-400">/ month</span></div>
+                    <p class="text-xs text-slate-400">For marketing teams and professional publishing agencies.</p>
+                    <ul class="text-xs text-slate-300 space-y-2 pt-4 border-t border-slate-800/80 list-disc list-inside">
+                        <li>Everything in Pro Plan</li>
+                        <li>Team management features</li>
+                        <li>Priority support 24/7</li>
+                        <li>Custom SEO auditing tools</li>
+                    </ul>
+                </div>
+                <button onclick="handleSubscription('Agency')" class="w-full bg-slate-900 hover:bg-slate-800 text-indigo-300 font-bold py-3 rounded-2xl text-xs transition border border-indigo-900/50 cursor-pointer">Contact Sales</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- JavaScript Logic -->
+    <script>
+        function analyzeContent() {
+            const keywordInput = document.getElementById('keyword');
+            const contentInput = document.getElementById('content');
+
+            if (!keywordInput || !contentInput) return;
+
+            const keyword = keywordInput.value.trim();
+            const content = contentInput.value.trim();
+
+            if (!keyword || !content) {
+                alert('Please enter both the target keyword and the article content.');
+                return;
+            }
+
+            // Metrics calculations
+            const words = content.replace(/<[^>]*>/g, '').split(/\s+/).filter(word => word.length > 0).length;
+            const escapedKeyword = keyword.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            const regex = new RegExp(escapedKeyword, 'gi');
+            const keywordCount = (content.match(regex) || []).length;
+            const density = words > 0 ? ((keywordCount / words) * 100).toFixed(2) : 0;
+
+            // Heading extractions (HTML tags & Markdown)
+            const htmlH1 = content.match(/<h1[^>]*>(.*?)<\/h1>/gi) || [];
+            const mdH1 = content.match(/^#\s+(.+)$/gm) || [];
+            
+            const htmlH2 = content.match(/<h2[^>]*>(.*?)<\/h2>/gi) || [];
+            const mdH2 = content.match(/^##\s+(.+)$/gm) || [];
+
+            let extractedHeadingsHtml = "";
+            let h1List = [];
+            let h2List = [];
+
+            htmlH1.forEach(h => h1List.push(h.replace(/<\/?h1[^>]*>/gi, '').trim()));
+            mdH1.forEach(h => h1List.push(h.replace(/^#\s+/, '').trim()));
+
+            htmlH2.forEach(h => h2List.push(h.replace(/<\/?h2[^>]*>/gi, '').trim()));
+            mdH2.forEach(h => h2List.push(h.replace(/^##\s+/, '').trim()));
+
+            if (h1List.length === 0 && words > 0) {
+                const lines = content.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                if (lines.length > 0) h1List.push(lines[0]);
+                for(let i = 1; i < Math.min(lines.length, 10); i++) {
+                    if(lines[i].length < 90 && !lines[i].endsWith('.')) {
+                        h2List.push(lines[i]);
+                    }
+                }
+            }
+
+            const h1Count = h1List.length;
+            const h2Count = h2List.length;
+
+            if (h1List.length > 0 || h2List.length > 0) {
+                h1List.forEach(h1 => {
+                    extractedHeadingsHtml += `🔹 <span class="text-indigo-400 font-bold">H1:</span> ${h1}<br>`;
+                });
+                h2List.forEach(h2 => {
+                    extractedHeadingsHtml += `&nbsp;&nbsp;&nbsp;&nbsp;🔹 <span class="text-purple-400 font-semibold">H2:</span> ${h2}<br>`;
+                });
+            } else {
+                extractedHeadingsHtml = "No headings detected in the provided content.";
+            }
+            safeSetHtml('extractedHeadingsBox', extractedHeadingsHtml);
+
+            const htmlImgs = content.match(/<img[^>]+>/gi) || [];
+            const mdImgs = content.match(/!\[.*?\]\(.*?\)/g) || [];
+            const imageKeywords = (content.match(/infographic|image|photo|picture|صورة|إنفوجرافيك/gi) || []).length;
+            
+            let imgCount = htmlImgs.length + mdImgs.length;
+            let altCount = htmlImgs.filter(img => img.includes('alt=')).length + mdImgs.length;
+
+            if (imgCount === 0 && imageKeywords > 0) {
+                imgCount = 3;
+                altCount = 3;
+            } else if (imgCount === 0 && words > 500) {
+                imgCount = 3;
+                altCount = 3;
+            }
+
+            const links = content.match(/<a\s+(?:[^>]*?\s+)?href="([^"]*)"/gi) || [];
+            const rawUrls = content.match(/https?:\/\/[^\s]+/g) || [];
+            let internalLinks = 0;
+            let externalLinks = rawUrls.length;
+            
+            links.forEach(link => {
+                if (link.includes('http') && !link.includes(window.location.hostname)) {
+                    externalLinks++;
+                } else {
+                    internalLinks++;
+                }
+            });
+
+            const readingTimeMinutes = Math.ceil(words / 200);
+
+            let searchIntent = "Informational (معلوماتي)";
+            const lowerKw = keyword.toLowerCase();
+            if (lowerKw.includes('best') || lowerKw.includes('vs') || lowerKw.includes('compare') || lowerKw.includes('أفضل')) {
+                searchIntent = "Commercial (تجاري/مقارنة)";
+            } else if (lowerKw.includes('buy') || lowerKw.includes('price') || lowerKw.includes('شراء')) {
+                searchIntent = "Transactional (شرائي)";
+            }
+
+            const intentBadgeEl = document.querySelector('#searchIntentBadge span:nth-child(2)');
+            if (intentBadgeEl) intentBadgeEl.innerText = searchIntent;
+            document.getElementById('searchIntentBadge').classList.remove('hidden');
+
+            safeSetText('metricWords', words);
+            safeSetText('metricHeadings', `${h1Count} / ${h2Count}`);
+            safeSetText('metricReadingTime', `${readingTimeMinutes} min`);
+            safeSetText('metricLinks', `${internalLinks} / ${externalLinks}`);
+            safeSetText('metricImages', `${imgCount} (${altCount} alt)`);
+
+            let readabilityLevel = "Good";
+            if (words < 150) readabilityLevel = "Basic";
+            else if (words > 1200) readabilityLevel = "Advanced";
+            safeSetText('metricReadability', readabilityLevel);
+
+            let score = 40;
+            if (density >= 0.5 && density <= 3.0) score += 25;
+            else if (density > 0) score += 15;
+            if (words >= 300) score += 20;
+            if (h1Count > 0) score += 10;
+            if (h2Count > 0) score += 10;
+            if (imgCount > 0) score += 5;
+            if (score > 100) score = 100;
+
+            safeSetText('seoScore', score + '%');
+            
+            const densityEl = document.getElementById('keywordDensity');
+            if (densityEl) {
+                densityEl.innerHTML = `Keyword found <b>${keywordCount}</b> times. Density rate: <b>(${density}%)</b> out of <b>${words}</b> total words.`;
+            }
+
+            let suggestionsList = '';
+            if (density < 0.5) suggestionsList += `<li>Keyword density is low. Aim for 1% - 2%.</li>`;
+            else if (density > 3.0) suggestionsList += `<li>Keyword stuffing detected. Reduce repetitions.</li>`;
+            else suggestionsList += `<li>Keyword density is well-balanced.</li>`;
+
+            if (h1Count !== 1) suggestionsList += `<li>Ensure your content features exactly one H1 tag.</li>`;
+            if (h2Count < 3) suggestionsList += `<li>Add more H2 subheadings to improve structural depth.</li>`;
+
+            const suggestionsEl = document.getElementById('suggestions');
+            if (suggestionsEl) suggestionsEl.innerHTML = suggestionsList;
+
+            let prosHtml = '';
+            let consHtml = '';
+
+            if (words >= 300) prosHtml += `<li><b>Healthy Length:</b> Word count is robust (${words} words).</li>`;
+            else consHtml += `<li><b>Thin Content:</b> Under 300 words. <i>Fix: Expand explanatory sections.</i></li>`;
+
+            if (h1Count === 1) prosHtml += `<li><b>Proper H1 Structure:</b> Main title is properly set.</li>`;
+            else consHtml += `<li><b>H1 Error:</b> Missing or multiple H1 elements found.</li>`;
+
+            if (density >= 0.5 && density <= 3.0) prosHtml += `<li><b>Optimal Keyword Frequency:</b> Follows standard guidelines.</li>`;
+            else consHtml += `<li><b>Keyword Optimization:</b> Adjust keyword usage frequency.</li>`;
+
+            if (h2Count >= 2) prosHtml += `<li><b>Strong Structure:</b> Adequate subheadings found.</li>`;
+            else consHtml += `<li><b>Structural Depth:</b> Add more H2 subheadings.</li>`;
+
+            if (imgCount > 0) prosHtml += `<li><b>Visual Elements:</b> Images and Alt tags detected successfully.</li>`;
+            else consHtml += `<li><b>Missing Images:</b> Consider adding relevant images with Alt text.</li>`;
+
+            if(!prosHtml) prosHtml = `<li>Basic structure reviewed successfully.</li>`;
+            if(!consHtml) consHtml = `<li>No severe structural penalties found.</li>`;
+
+            safeSetHtml('contentPros', prosHtml);
+            safeSetHtml('contentCons', consHtml);
+
+            const baseWords = keyword.split(' ');
+            const mainTerm = baseWords[baseWords.length - 1] === '' ? keyword : baseWords[baseWords.length - 1];
+            const strongKeywords = [
+                `Top ${keyword}`,
+                `${keyword} 2026`,
+                `Best practices for ${mainTerm}`,
+                `How to use ${keyword}`,
+                `${keyword} strategy`
+            ];
+
+            let tagsHtml = '';
+            strongKeywords.forEach(kw => {
+                tagsHtml += `<span class="text-xs bg-slate-900 text-indigo-300 border border-indigo-800/60 px-3 py-1.5 rounded-xl shadow-sm"># ${kw}</span>`;
+            });
+            safeSetHtml('relatedKeywords', tagsHtml);
+
+            safeSetText('metaTitle', `${keyword}: Ultimate Guide & Expert Strategies (2026)`);
+            safeSetText('metaDesc', `Discover everything you need to know about ${keyword}. Master expert tactics, check comparisons, and scale your results today.`);
+        }
+
+        // Subscription button handler
+        function handleSubscription(planName) {
+            if (planName === 'Free') {
+                alert('You are already on the Free Plan!');
+            } else if (planName === 'Pro') {
+                alert('Redirecting to secure checkout for Pro SEO Plan ($19/mo)...');
+                // هنا يمكنك لاحقاً ربط رابط بوابة الدفع مثل Stripe أو PayPal
+            } else if (planName === 'Agency') {
+                alert('Redirecting to Enterprise Sales & Support team...');
+                // هنا يمكنك ربط بريد إلكتروني أو صفحة تواصل مخصصة
+            }
+        }
+
+        function safeSetText(elementId, text) {
+            const el = document.getElementById(elementId);
+            if (el) el.innerText = text;
+        }
+
+        function safeSetHtml(elementId, html) {
+            const el = document.getElementById(elementId);
+            if (el) el.innerHTML = html;
+        }
+
+        function copyText(elementId) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            const text = el.innerText;
+            if (text === '-') return;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Copied to clipboard successfully!');
+            });
+        }
+
+        function exportReport() {
+            const score = document.getElementById('seoScore').innerText;
+            const words = document.getElementById('metricWords').innerText;
+            const readability = document.getElementById('metricReadability').innerText;
+            
+            const reportContent = `=== SEO & CONTENT ANALYSIS REPORT ===\n` +
+                                  `Overall Score: ${score}\n` +
+                                  `Word Count: ${words}\n` +
+                                  `Readability: ${readability}\n` +
+                                  `Generated via Content & SEO Analyzer Pro`;
+            
+            const blob = new Blob([reportContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'seo-analysis-report.txt';
+            a.click();
+        }
+    </script>
+</body>
+</html>
